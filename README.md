@@ -12,6 +12,8 @@ Created in Kiosked Hackton № 1
 
     $ npm install -g cordova ionic
     $ cd ./mobile
+    $ ionic platform add android
+    $ ionic platform add ios
     $ cordova plugin add cordova-plugin-statusbar
     $ npm install -g gulp
     $ ionic setup sass
