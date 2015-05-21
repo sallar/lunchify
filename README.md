@@ -11,6 +11,8 @@ Created in Kiosked Hackton № 1
 # Install (Mobile)
 
     $ npm install -g cordova ionic
-    $ ionic platform add ios
+    $ cd ./mobile
+    $ cordova plugin add cordova-plugin-statusbar
+    $ ionic serve
     
 # Install (...)
