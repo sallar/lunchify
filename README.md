@@ -13,6 +13,7 @@ Created in Kiosked Hackton № 1
     $ npm install -g cordova ionic
     $ cd ./mobile
     $ cordova plugin add cordova-plugin-statusbar
+    $ npm install -g gulp
     $ ionic setup sass
     $ ionic serve
    
