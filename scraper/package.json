@@ -4,6 +4,6 @@
     "description": "A Simple Lunch Scraper",
     "dependencies": {
         "request": "latest",
-        "jquery": "latest"
+        "cheerio": "latest"
     }
 }
