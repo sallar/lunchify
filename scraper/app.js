@@ -11,7 +11,7 @@ String.prototype.lpad = function(padString, length) {
     return str;
 };
 
-request({url: 'https://lunchify.firebaseio.com/areas/keilaniemi/venues.json'}, function(err, resp, body) {
+request({url: 'https://lunchify.firebaseio.com/areas/keilaniemi/venues.js'}, function(err, resp, body) {
     var json = JSON.parse(body),
         dates = {};
 
