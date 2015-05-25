@@ -37,7 +37,7 @@ request({url: 'https://lunchify.firebaseio.com/areas/keilaniemi/venues.json'}, f
 
                     items.each(function () {
                         var date = $('.item-header h3', this).text();
-                        var menuEl = $('.item-body li p.dish', this);
+                        var menuEl = $('.item-body p', this);
                         var menu = [];
                         var meals = [];
 
