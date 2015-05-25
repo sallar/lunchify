@@ -11,71 +11,72 @@ String.prototype.lpad = function(padString, length) {
     return str;
 };
 
-request({url: 'https://lunchify.firebaseio.com/areas/keilaniemi/venues.js'}, function(err, resp, body) {
+request({url: 'https://lunchify.firebaseio.com/areas/keilaniemi/venues.json'}, function(err, resp, body) {
     var json = JSON.parse(body),
         dates = {};
 
+    //json.forEach(function(venue) {
+    for(var key in json) {
+        if( json.hasOwnProperty(key) ) {
+            var venue = json[key];
 
-    json.forEach(function(venue) {
+            var options = {
+                url: 'http://lounaat.info/lounas/' + venue.simple_name + '/espoo',
+                headers: {
+                    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:38.0) Gecko/20100101 Firefox/38.0'
+                }
+            };
 
-        var options = {
-            url: 'http://lounaat.info/lounas/' + venue.simple_name + '/espoo',
-            headers: {
-                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36'
-            }
-        };
+            (function(venue) {
+                request(options, function (error, response, body) {
+                    var $ = cheerio.load(body);
 
-        request(options, function(error, response, body) {
+                    // Items
+                    var items = $('#menu .item'),
+                        data = {};
 
-            var $ = cheerio.load(body);
+                    items.each(function () {
+                        var date = $('.item-header h3', this).text();
+                        var menuEl = $('.item-body li p.dish', this);
+                        var menu = [];
+                        var meals = [];
 
+                        menuEl.each(function () {
+                            menu.push($(this).html());
+                        });
 
-            // Items
-            var items = $('.item', $('.item-container')[0]),
-                data  = {};
+                        for (var i = 0; i < menu.length; i += 2) {
+                            meals.push({
+                                name_fi: menu[i],
+                                name: menu[i + 1]
+                            });
+                        }
 
-            items.each(function() {
-                var date = $('.item-header h3', this).text();
-                var menuEl = $('.item-body li p', this);
-                var menu = [];
-                var meals = [];
+                        if (date.match(/(\d+)/)) {
+                            date = date.match(/(\d+)/g);
+                        }
 
-                menuEl.each(function() {
-                    menu.push($(this).html());
-                });
-
-                for(var i = 0; i < menu.length; i += 2) {
-                    meals.push({
-                        name_fi: menu[i],
-                        name: menu[i+1]
+                        if (typeof date == 'object') {
+                            var dateStr = '2015' + '-' + date[1].lpad("0", 2) + '-' + date[0].lpad("0", 2);
+                            data[dateStr] = meals;
+                        }
                     });
-                }
 
-                if( date.match(/(\d+)/) ) {
-                    date = date.match(/(\d+)/g);
-                }
-                //console.log(date);
-                if( typeof date == 'object' ) {
-                    var dateStr = '2015' + '-' + date[1].lpad("0", 2) + '-' + date[0].lpad("0", 2);
-                    data[dateStr] = meals;
-                }
-            });
+                    var api = 'https://lunchify.firebaseio.com/areas/keilaniemi/meals/' + venue.id + '.json';
 
-            //dates[venue.id] = data;
+                    request({
+                        method: 'PUT',
+                        uri: api,
+                        body: data,
+                        json: true
+                    }, function (err, resp, body) {
+                        console.log('done');
+                    });
 
-            var api = 'https://lunchify.firebaseio.com/areas/keilaniemi/meals/'+venue.id+'.json';
+                });
+            })(venue);
 
-            request({
-                method: 'PUT',
-                uri: api,
-                body: data,
-                json: true
-            }, function(err, resp, body) {
-                console.log('done');
-            });
-
-        });
-
-    });
-
+            //});
+        }
+    }
 });
