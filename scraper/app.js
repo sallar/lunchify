@@ -59,7 +59,21 @@ request({url: 'https://lunchify.firebaseio.com/areas/keilaniemi/venues.json'}, f
                         if (typeof date == 'object') {
                             var dateStr = '2015' + '-' + date[1].lpad("0", 2) + '-' + date[0].lpad("0", 2);
                             data[dateStr] = meals;
+
+                            var mealUrl = 'https://lunchify.firebaseio.com/areas/keilaniemi/meals_by_date/' + dateStr + '/' +venue.id+'.json';
+                            request({
+                                method: 'PUT',
+                                uri: mealUrl,
+                                body: {
+                                  "meals": meals,
+                                  "venue": venue
+                                },
+                                json: true
+                            }, function(err, resp, body) {
+                                console.log('done updating ' + mealUrl);
+                            });
                         }
+
                     });
 
                     var api = 'https://lunchify.firebaseio.com/areas/keilaniemi/meals/' + venue.id + '.json';
