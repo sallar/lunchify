@@ -8,7 +8,17 @@ Created in Kiosked Hackton № 1
 - Saber
 - JP
 
-# Install (Mobile)
+# Install (Mobile / Native iOS)
+
+    $ cd ./reactClient
+    $ npm install
+    $ git submodule init && git submodule update 
+    $ cd vendor/RCTRefreshControl/ODRefreshControl
+    $ git submodule init && git submodule update 
+    
+Then open reactClient/reactClient.xcodeproj in your xcode and hit run.
+
+# Install (Mobile / Cordova)
 
     $ npm install -g cordova ionic
     $ cd ./mobile
