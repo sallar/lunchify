@@ -7,7 +7,7 @@
 var React      = require('react-native'),
     Helpers    = require('./utils/Helpers'),
     //Navigator  = require('./views/Navigator'),
-    Navigator  = require('./views/NewNavigation'),
+    Navigator  = require('./views/NavigatorIOS'),
     VenuesView = require('./views/Venues');
 
 var {

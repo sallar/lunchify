@@ -54,6 +54,12 @@
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
+  
+  [[UINavigationBar appearance] setTitleTextAttributes:@{
+                                                         NSFontAttributeName : [UIFont fontWithName:@"Lato-Semibold" size:18],
+                                                         NSForegroundColorAttributeName : [UIColor whiteColor]
+                                                         }];
+  
   return YES;
 }
 

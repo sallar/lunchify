@@ -32,6 +32,7 @@ var {
     Component,
     ListView,
     TouchableHighlight,
+    ScrollView,
     ActivityIndicatorIOS,
 } = React;
 
@@ -203,7 +204,7 @@ class VenuesView extends Component {
 
     render() {
         return (
-            <View style={Stylesheet.flex}>
+            <View style={[Stylesheet.flex, {paddingTop: 100}]}>
                 {this.renderLoading.call(this)}
                 <ListView
                     ref={LISTVIEW}
