@@ -46,10 +46,7 @@ fetch(api + '/venues/')
                                 pr.push(
                                     (function(venue, date, meals) {
                                         return new Promise(function(r) {
-                                            console.log("=====");
                                             console.log('Saving Menu '+date+' for ' + venue.name);
-                                            console.log(meals);
-                                            console.log("=====");
 
                                             request({
                                                 method: 'POST',
