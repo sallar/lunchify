@@ -25,24 +25,48 @@ module.exports = function(obj) {
     return new Promise(function(resolve) {
         Object.keys(obj).forEach(function(key) {
             var menu  = obj[key],
-                meals = [];
+                meals = [],
+                last  = false;
 
             // Detection
-            for (var i = 0; i < obj[key].length; i += 2) {
-                var couple = [];
+            for (var i = 0; i < obj[key].length; i += 1) {
+                var test = /English/.test(shell.exec('polyglot cat <<< $"'+menu[i]+'"', {silent: true}).output);
 
-                for(var j = 0; j < 2; j++) {
-                    couple[j] = /English/.test(shell.exec('polyglot cat <<< $"'+menu[i+j]+'"', {silent: true}).output);
-                }
-
-                if(couple[0] && !couple[1]) {
-                    meals.push({name_fi: menu[i+1], name: menu[i]});
-                } else if(!couple[0] && couple[1]) {
-                    meals.push({name_fi: menu[i], name: menu[i+1]});
+                if(!last) {
+                    last = {
+                        e: test,
+                        n: menu[i]
+                    };
                 } else {
-                    meals.push({name_fi: menu[i], name: ''});
-                    meals.push({name_fi: menu[i+1], name: ''});
+                    // Last one was Finnish
+                    // this one is English, group them.
+                    if(!last.e && test) {
+                        meals.push({name_fi: last.n, name: menu[i]});
+                    }
+                    // Reverse
+                    else if(last.e && !test) {
+                        meals.push({name_fi: menu[i], name: last.n});
+                    }
+                    // Both are Finnish
+                    else if(!last.e && !test) {
+                        meals.push({name_fi: last.n, name: null});
+                        meals.push({name_fi: menu[i], name: null});
+                    }
+                    // Both are English
+                    else {
+                        meals.push({name: last.n, name_fi: null});
+                        meals.push({name: menu[i], name_fi: null});
+                    }
+                    last = false;
                 }
+            }
+
+            // Excess?
+            if(last) {
+                meals.push({
+                    name: last.e ? last.n : null,
+                    name_fi: last.e ? null : last.n
+                });
             }
 
             // Set new menu

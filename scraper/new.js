@@ -6,10 +6,12 @@
 
 var jsdom = require('jsdom'),
     fetch = require('node-fetch'),
-    compile = require('./compile');
+    request = require('request'),
+    compile = require('./compile'),
+    api     = 'http://lunchify.fi:8080/api';
 
 //noinspection JSUnresolvedFunction
-fetch('http://127.0.0.1:8080/api/venues/')
+fetch(api + '/venues/')
     .then(function(res) {
         return res.json();
     })
@@ -18,13 +20,13 @@ fetch('http://127.0.0.1:8080/api/venues/')
         // Proceed with opening their websites.
         var promises = [];
 
-        var temp = [venues[2]];
-
         // For each venue, create a promise
-        temp.forEach(function(venue) {
+        venues.forEach(function(venue) {
             var promise = new Promise(function(resolve) {
 
                 // Open the page
+                console.log('Opening ' + venue.name);
+
                 jsdom.env(
                     'http://lounaat.info/lounas/' + venue.simple_name + '/espoo',
                     ["http://code.jquery.com/jquery-2.1.4.min.js"],
@@ -35,9 +37,45 @@ fetch('http://127.0.0.1:8080/api/venues/')
                     },
                     function(errors, window) {
                         // Compile
+                        console.log('Compiling Menu for ' + venue.name);
                         compile(venue, window).then(function(menu) {
-                            console.log(menu);
-                            (resolve)();
+                            // Iterate
+                            var pr = [];
+
+                            Object.keys(menu).forEach(function(date) {
+                                pr.push(
+                                    (function(venue, date, meals) {
+                                        return new Promise(function(r) {
+                                            console.log("=====");
+                                            console.log('Saving Menu '+date+' for ' + venue.name);
+                                            console.log(meals);
+                                            console.log("=====");
+
+                                            request({
+                                                method: 'POST',
+                                                uri: api + '/venues/' + venue._id + '/' + date
+                                            }, function(err, resp, body) {
+                                                body = JSON.parse(body);
+
+                                                if(meals.length) {
+                                                    request({
+                                                        method: 'POST',
+                                                        uri   : api + '/menus/' + body._id,
+                                                        body  : meals,
+                                                        json  : true
+                                                    }, function () {
+                                                        r();
+                                                    });
+                                                } else {
+                                                    r();
+                                                }
+                                            });
+                                        });
+                                    })(venue, date, menu[date])
+                                );
+                            });
+
+                            Promise.all(pr).then(resolve);
                         });
                     }
                 );
@@ -52,11 +90,3 @@ fetch('http://127.0.0.1:8080/api/venues/')
             console.log('all promises are done');
         });
     });
-
-//jsdom.env(
-//    "https://iojs.org/dist/",
-//    ["http://code.jquery.com/jquery-2.1.4.min.js"],
-//    function (errors, window) {
-//        console.log("there have been", window.$("a").length - 4, "io.js releases!");
-//    }
-//);

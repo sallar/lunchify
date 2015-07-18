@@ -62,7 +62,9 @@ module.exports = function(venue, window) {
                 $dishes.each(function() {
                     var txt = $(this).text().replace(/((^|\s|,)[a-z]{1,3}($|\s|,))/g, ', ');
                     txt = (txt.split(/[\s,]{2,}/)).filter(Boolean).join(', ');
-                    meals.push(txt.ucwords());
+                    if(!/:$/.test(txt)) {
+                        meals.push(txt.ucwords());
+                    }
                 });
 
                 // Push to menus
