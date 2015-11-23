@@ -5,23 +5,15 @@
 "use strict";
 
 //var exec = require('child_process').exec;
-var shell = require('shelljs');
-
-// executes `pwd`
-//child = exec('polyglot cat <<< $"Porsaan kassleria vihreässä currykastikkeessa"', function (error, stdout, stderr) {
-//    if(/Finnish/.test(stderr)) {
-//        console.log('Finnish Detected');
-//    } else {
-//        console.log('English Detected');
-//    }
-//});
+var cld = require('cld'),
+    PromiseArrays = require('promise-arrays');
 
 /**
  * Detect meals language
  * @param arr
  * @returns {Promise}
  */
-module.exports = function(obj) {
+/*module.exports = */function oldFunc(obj) {
     return new Promise(function(resolve) {
         Object.keys(obj).forEach(function(key) {
             var menu  = obj[key],
@@ -74,5 +66,39 @@ module.exports = function(obj) {
         });
 
         (resolve)(obj);
+    });
+}
+
+module.exports = function(obj) {
+    return PromiseArrays.map(Object.keys(obj), function(key) {
+        return PromiseArrays.map(obj[key], function(str) {
+            return new Promise(function(resolve) {
+                var options = {
+                    isHTML       : false,
+                    httpHint     : 'en',
+                    languageHint : 'ENGLISH'
+                };
+
+                cld.detect(str, options, function(err, result) {
+                    var english = false;
+                    if(
+                        !err &&
+                        result.languages[0].code === 'en' &&
+                        result.reliable === true
+                    ) {
+                        english = true;
+                    }
+
+                    resolve({
+                        english: english,
+                        name: str
+                    });
+                });
+            });
+        }).then(function(deteced) {
+            obj[key] = deteced;
+        });
+    }).then(function() {
+        return obj;
     });
 };

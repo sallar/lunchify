@@ -75,6 +75,7 @@ module.exports = function(venue, window) {
         // Now detect languages
         // Using command line
         detect(menus).then(function(newMenus) {
+            console.log(newMenus);
             (resolve)(newMenus);
         });
     });
