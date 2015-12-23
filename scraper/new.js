@@ -8,7 +8,7 @@ var jsdom = require('jsdom'),
     fetch = require('node-fetch'),
     request = require('request'),
     compile = require('./compile'),
-    api     = 'http://lunchify/api';
+    api     = 'http://lunchify.fi/api';
 
 //noinspection JSUnresolvedFunction
 fetch(api + '/venues/')
