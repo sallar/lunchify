@@ -8,5 +8,6 @@ Created in Kiosked Hackton № 1
 - Saber
 - JP
 
-Hacking in progress... 
+Hacking in progress...
+
 ![hacking in progress](http://media.giphy.com/media/eCqFYAVjjDksg/giphy.gif)
