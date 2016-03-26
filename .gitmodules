@@ -1,3 +1,0 @@
-[submodule "reactClient/vendor/RCTRefreshControl"]
-	path = reactClient/vendor/RCTRefreshControl
-	url = https://github.com/Shuangzuan/RCTRefreshControl
